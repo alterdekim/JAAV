@@ -1,0 +1,69 @@
+plugins {
+    id "de.undercouch.download" version "5.6.0"
+    alias(libs.plugins.androidApplication)
+}
+
+android {
+    namespace 'com.alterdekim.fridaapp'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.alterdekim.fridaapp"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions.doNotStrip "**/*.so"
+}
+
+tasks.withType(JavaCompile) {
+    compileTask ->
+        {
+            compileTask.dependsOn(downloadAarch)
+            compileTask.dependsOn(downloadArmeabi)
+            compileTask.dependsOn(downloadx86)
+        }
+}
+
+task downloadAarch(type: Download) {
+    src 'https://jenkins.awain.net/job/Frida-android-binaries/lastSuccessfulBuild/artifact/jniLibs/arm64-v8a/frida.so'
+    dest layout.projectDirectory.file('jniLibs/arm64-v8a/frida.so')
+}
+
+task downloadArmeabi(type: Download) {
+    src 'https://jenkins.awain.net/job/Frida-android-binaries/lastSuccessfulBuild/artifact/jniLibs/armeabi-v7a/frida.so'
+    dest layout.projectDirectory.file('jniLibs/armeabi-v7a/frida.so')
+}
+
+task downloadx86(type: Download) {
+    src 'https://jenkins.awain.net/job/Frida-android-binaries/lastSuccessfulBuild/artifact/jniLibs/x86/frida.so'
+    dest layout.projectDirectory.file('jniLibs/x86/frida.so')
+}
+
+dependencies {
+    implementation libs.okhttp
+    implementation libs.ground.crockford32
+    implementation libs.ktsh
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.activity
+    implementation libs.constraintlayout
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}
