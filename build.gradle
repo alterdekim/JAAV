@@ -31,29 +31,31 @@ android {
     packagingOptions.doNotStrip "**/*.so"
 }
 
-tasks.withType(JavaCompile) {
-    compileTask ->
-        {
-            compileTask.dependsOn(downloadAarch)
-            compileTask.dependsOn(downloadArmeabi)
-            compileTask.dependsOn(downloadx86)
-        }
-}
-
 task downloadAarch(type: Download) {
     src 'https://jenkins.awain.net/job/Frida-android-binaries/lastSuccessfulBuild/artifact/jniLibs/arm64-v8a/frida.so'
-    dest layout.projectDirectory.file('jniLibs/arm64-v8a/frida.so')
+    dest layout.projectDirectory.file('src/main/jniLibs/arm64-v8a/frida.so')
 }
 
 task downloadArmeabi(type: Download) {
     src 'https://jenkins.awain.net/job/Frida-android-binaries/lastSuccessfulBuild/artifact/jniLibs/armeabi-v7a/frida.so'
-    dest layout.projectDirectory.file('jniLibs/armeabi-v7a/frida.so')
+    dest layout.projectDirectory.file('src/main/jniLibs/armeabi-v7a/frida.so')
 }
 
-task downloadx86(type: Download) {
+task downloadx86(type: Download, ) {
     src 'https://jenkins.awain.net/job/Frida-android-binaries/lastSuccessfulBuild/artifact/jniLibs/x86/frida.so'
-    dest layout.projectDirectory.file('jniLibs/x86/frida.so')
+    dest layout.projectDirectory.file('src/main/jniLibs/x86/frida.so')
 }
+
+task deleteLibs(type: Delete) {
+    delete fileTree('src/main/jniLibs') {
+        include '**/*.so'
+    }
+}
+
+preBuild.dependsOn deleteLibs
+preBuild.dependsOn downloadAarch
+/*preBuild.dependsOn downloadArmeabi
+preBuild.dependsOn downloadx86*/
 
 dependencies {
     implementation libs.okhttp

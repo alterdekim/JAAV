@@ -3,6 +3,7 @@ package com.alterdekim.fridaapp;
 import android.content.Intent;
 import android.net.VpnService;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -44,9 +45,11 @@ public class MainActivity extends AppCompatActivity {
     private void startVpn() {
         Intent intent = VpnService.prepare(MainActivity.this);
         if (intent != null) {
+            Log.i("ASD", "!= null");
             launcher.launch(intent);
         } else {
-            onActivityResult(0, RESULT_OK, null);
+            Log.i("ASD", "== null");
+            startService(new Intent(this, FridaService.class));
         }
     }
 }

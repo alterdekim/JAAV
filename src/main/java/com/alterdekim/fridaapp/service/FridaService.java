@@ -28,9 +28,13 @@ public class FridaService extends VpnService {
     public void onCreate() {
         setupVPN();
         Log.i(TAG, "Started");
-
-        Thread t = new Thread(new NativeBinaryConnection(vpnInterface.detachFd(), getApplicationContext().getApplicationInfo().nativeLibraryDir));
-        t.start();
+        // .detachFd()
+        try {
+            Thread t = new Thread(new NativeBinaryConnection(vpnInterface.dup().getFd(), getApplicationContext().getApplicationInfo().nativeLibraryDir));
+            t.start();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
 
         new Thread(new Runnable() {
             @Override
