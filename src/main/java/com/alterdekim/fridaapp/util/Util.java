@@ -1,4 +1,4 @@
-package com.alterdekim.fridaapp;
+package com.alterdekim.fridaapp.util;
 
 import android.content.Context;
 import android.database.Cursor;

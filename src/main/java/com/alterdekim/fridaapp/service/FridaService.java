@@ -6,16 +6,6 @@ import android.net.VpnService;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-import com.alterdekim.frida.FridaLib;
-import com.alterdekim.fridaapp.R;
-
-import java.io.IOException;
-import java.util.Objects;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
 public class FridaService extends VpnService {
     private static final String TAG = FridaService.class.getSimpleName();
     private static final String VPN_ADDRESS = "10.66.66.6"; // Only IPv4 support for now
@@ -28,42 +18,16 @@ public class FridaService extends VpnService {
     public void onCreate() {
         setupVPN();
         Log.i(TAG, "Started");
-        // .detachFd()
         try {
             Thread t = new Thread(new NativeBinaryConnection(vpnInterface.dup().detachFd(), getApplicationContext().getApplicationInfo().nativeLibraryDir));
             t.start();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                OkHttpClient client = new OkHttpClient();
-
-
-                Request request = new Request.Builder()
-                        .url("https://google.com")
-                        .build();
-                try {
-                    try (Response response = client.newCall(request).execute()) {
-                      //  Log.i(TAG, "Response code: " + response.code());
-                        if (response.body() != null) {
-                         //   Log.i(TAG, "Response body: " + response.body().string());
-                        } else {
-                          //  Log.i(TAG, "Response body: null");
-                        }
-                    }
-                } catch (IOException e) {
-                    Log.e(TAG, Objects.requireNonNull(e.getMessage()));
-                }
-            }
-        }).start();
     }
 
     private void setupVPN() {
         try {
-            //if (vpnInterface == null) {
                 Builder builder = new Builder();
                 builder.setMtu(1400);
                 builder.addAddress(VPN_ADDRESS, 24);
@@ -71,10 +35,7 @@ public class FridaService extends VpnService {
                 builder.addDnsServer("8.8.8.8");
                 //builder.addAllowedApplication();
                 builder.addDisallowedApplication("com.alterdekim.fridaapp");
-                // .setSession(getString(R.string.app_name))
-                // .setConfigureIntent(pendingIntent)
                 vpnInterface = builder.establish();
-           // }
         } catch (Exception e) {
             Log.e(TAG, "error", e);
         }

@@ -4,19 +4,21 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@RequiredArgsConstructor
+@Getter
+@Setter
 public class Config {
     @PrimaryKey
     public int uid;
 
     @ColumnInfo(name = "title")
-    public String title;
+    public final String title;
 
     @ColumnInfo(name = "data_b32")
-    public String data_b32;
-
-    public Config(String title, String data_b32) {
-        this.title = title;
-        this.data_b32 = data_b32;
-    }
+    public final String data_b32;
 }

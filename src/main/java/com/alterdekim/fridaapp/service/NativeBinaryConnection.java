@@ -3,11 +3,6 @@ package com.alterdekim.fridaapp.service;
 import android.util.Log;
 
 import com.alterdekim.frida.FridaLib;
-import com.jaredrummler.ktsh.Shell;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
 
 public class NativeBinaryConnection implements Runnable {
     private static final String TAG = NativeBinaryConnection.class.getSimpleName();

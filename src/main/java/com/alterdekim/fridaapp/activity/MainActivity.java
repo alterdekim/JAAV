@@ -1,15 +1,17 @@
-package com.alterdekim.fridaapp;
+package com.alterdekim.fridaapp.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.net.VpnService;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -21,18 +23,26 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.room.Room;
 
+import com.alterdekim.fridaapp.R;
+import com.alterdekim.fridaapp.controller.ControllerId;
+import com.alterdekim.fridaapp.controller.ControllerManager;
+import com.alterdekim.fridaapp.controller.MainActivityController;
+import com.alterdekim.fridaapp.util.Util;
 import com.alterdekim.fridaapp.room.AppDatabase;
 import com.alterdekim.fridaapp.room.Config;
 import com.alterdekim.fridaapp.service.FridaService;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.apache.commons.codec.binary.Base32;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private AppDatabase db;
+
+    private MainActivityController controller;
 
     ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -62,12 +72,18 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        this.db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "def-db").build();
+
+        ControllerManager.putController(new MainActivityController());
+        this.controller = (MainActivityController) ControllerManager.getController(ControllerId.MainActivityController);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        this.controller.onCreateGUI(this);
+
         findViewById(R.id.addConfig).setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(this, v);
             popup.setOnMenuItemClickListener(MainActivity.this);
@@ -75,10 +91,25 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             popup.show();
         });
 
-        LayoutInflater inflater = getLayoutInflater();
-        for( Config config : db.userDao().getAll() ) {
 
-            View myLayout = inflater.inflate(R.layout.single_config, mainLayout, false);
+        LinearLayout cfg_list = (LinearLayout) findViewById(R.id.config_list);
+        LayoutInflater inflater = getLayoutInflater();
+        Iterator<Config> iter = db.userDao().getAll().iterator();
+        while( iter.hasNext() ) {
+            Config config = iter.next();
+            View cfg_instance = inflater.inflate(R.layout.single_config, cfg_list, false);
+            TextView view_name = (TextView) cfg_instance.findViewById(R.id.config_name);
+            SwitchMaterial view_switch = (SwitchMaterial) cfg_instance.findViewById(R.id.config_switch);
+            //view_switch.setUseMaterialThemeColors(true);
+            view_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    Log.i(TAG, "onCheckedChanged " + b);
+                }
+            });
+            view_name.setText(config.title);
+
+            if( iter.hasNext() ) inflater.inflate(R.layout.single_divider, cfg_list, false);
         }
     }
 
