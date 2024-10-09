@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/new_config"
+        android:icon="@drawable/baseline_create_24"
+        android:iconTint="@color/black"
+        android:title="@string/create_config" />
+    <item android:id="@+id/import_from_file"
+        android:icon="@drawable/baseline_file_open_24"
+        android:iconTint="@color/black"
+        android:title="@string/import_config" />
+</menu>

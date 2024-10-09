@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Frida</string>
+    <string name="create_config">Create from scratch</string>
+    <string name="import_config">Import from file</string>
 </resources>

@@ -33,17 +33,17 @@ android {
 
 task downloadAarch(type: Download) {
     src 'https://jenkins.awain.net/job/Frida-android-binaries/lastSuccessfulBuild/artifact/jniLibs/arm64-v8a/frida.so'
-    dest layout.projectDirectory.file('src/main/jniLibs/arm64-v8a/frida.so')
+    dest layout.projectDirectory.file('src/main/jniLibs/arm64-v8a/libfrida.so')
 }
 
 task downloadArmeabi(type: Download) {
     src 'https://jenkins.awain.net/job/Frida-android-binaries/lastSuccessfulBuild/artifact/jniLibs/armeabi-v7a/frida.so'
-    dest layout.projectDirectory.file('src/main/jniLibs/armeabi-v7a/frida.so')
+    dest layout.projectDirectory.file('src/main/jniLibs/armeabi-v7a/libfrida.so')
 }
 
 task downloadx86(type: Download, ) {
     src 'https://jenkins.awain.net/job/Frida-android-binaries/lastSuccessfulBuild/artifact/jniLibs/x86/frida.so'
-    dest layout.projectDirectory.file('src/main/jniLibs/x86/frida.so')
+    dest layout.projectDirectory.file('src/main/jniLibs/x86/libfrida.so')
 }
 
 task deleteLibs(type: Delete) {
@@ -52,19 +52,21 @@ task deleteLibs(type: Delete) {
     }
 }
 
-preBuild.dependsOn deleteLibs
-preBuild.dependsOn downloadAarch
+//preBuild.dependsOn deleteLibs
+//preBuild.dependsOn downloadAarch
 /*preBuild.dependsOn downloadArmeabi
 preBuild.dependsOn downloadx86*/
 
 dependencies {
     implementation libs.okhttp
-    implementation libs.ground.crockford32
+    implementation libs.commons.codec
     implementation libs.ktsh
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
+    implementation libs.room.runtime
+    annotationProcessor libs.room.compiler
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
