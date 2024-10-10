@@ -5,23 +5,24 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import java.util.List;
-import java.util.Optional;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 
 @Dao
 public interface ConfigDAO {
     @Query("SELECT * FROM config")
-    List<Config> getAll();
+    Observable<Config> getAll();
 
     @Query("SELECT * FROM config WHERE uid IN (:cfgIds)")
-    List<Config> loadAllByIds(int[] cfgIds);
+    Observable<Config> loadAllByIds(int[] cfgIds);
 
     @Query("SELECT * FROM config WHERE uid = :cfgId")
-    Optional<Config> loadById(int cfgId);
+    Single<Config> loadById(int cfgId);
 
     @Insert
-    void insertAll(Config... users);
+    Completable insertAll(Config... users);
 
     @Delete
-    void delete(Config user);
+    Completable delete(Config user);
 }

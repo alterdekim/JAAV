@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Config {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     public int uid;
 
     @ColumnInfo(name = "title")

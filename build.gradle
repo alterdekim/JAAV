@@ -69,6 +69,7 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     annotationProcessor libs.room.compiler
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
