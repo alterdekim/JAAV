@@ -3,4 +3,5 @@
     <string name="create_config">Create from scratch</string>
     <string name="import_config">Import from file</string>
     <string name="config_adding_error">Cannot add new config</string>
+    <string name="config_adding_success">SUCCESS!</string>
 </resources>

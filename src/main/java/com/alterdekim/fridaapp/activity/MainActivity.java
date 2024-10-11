@@ -33,8 +33,6 @@ import com.alterdekim.fridaapp.room.Config;
 import com.alterdekim.fridaapp.service.FridaService;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import org.apache.commons.codec.binary.Base32;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
@@ -57,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 try {
                     String raw_data = Util.readTextFromUri(this, data.getData());
                     String name = Util.getFilenameFromUri(this, data.getData());
-                    String b32 = Base32.builder().get().encodeToString(raw_data.getBytes(StandardCharsets.UTF_8));
-                    this.controller.insertNewConfig(name, b32);
+                    String hex = Util.bytesToHex(raw_data.getBytes());
+                    this.controller.insertNewConfig(name, hex);
                 } catch (IOException e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -68,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() != RESULT_OK) return;
-                startService(new Intent(this, FridaService.class));
+                startVpnService();
             }
     );
 
@@ -95,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             popup.getMenuInflater().inflate(R.menu.mm, popup.getMenu());
             popup.show();
         });
+
+        startVpn();
     }
 
     @Override
@@ -125,6 +125,10 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             launcher.launch(intent);
             return;
         }
+        startVpnService();
+    }
+
+    private void startVpnService() {
         startService(new Intent(this, FridaService.class));
     }
 }
