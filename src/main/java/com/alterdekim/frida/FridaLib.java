@@ -8,7 +8,7 @@ public class FridaLib {
         System.loadLibrary("frida");
     }
 
-    public native int start(String config_hex, int tun_fd, boolean close_fd_on_drop);
+    public native int start(String config_hex, int tun_fd, boolean close_fd_on_drop, String temp_file);
 
     public native int stop();
 

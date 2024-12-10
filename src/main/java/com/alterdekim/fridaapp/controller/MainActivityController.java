@@ -43,7 +43,6 @@ public class MainActivityController implements IController {
     }
 
     private void initConfigListGUI() {
-        Toast.makeText(this.mainActivity, R.string.config_adding_success, Toast.LENGTH_LONG).show();
         LayoutInflater inflater = this.mainActivity.getLayoutInflater();
         this.db.userDao().getAll()
                 .subscribeOn(Schedulers.io())

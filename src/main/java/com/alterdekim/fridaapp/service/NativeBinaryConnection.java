@@ -12,15 +12,15 @@ public class NativeBinaryConnection implements Runnable {
 
     private final int fd;
     private final String hex;
+    private final FridaLib lib;
+    private final String tempFile;
 
     @Override
     public void run() {
         try {
             Log.i(TAG, "FD: " + this.fd);
-            FridaLib lib = new FridaLib();
             Log.i(TAG, "Starting Frida client");
-            Log.i(TAG, "Hex: " + this.hex);
-            int r = lib.start(this.hex.toLowerCase(), this.fd, false);
+            int r = lib.start(this.hex.toLowerCase(), this.fd, false, this.tempFile);
             Log.i(TAG, "Exit code: " + r);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

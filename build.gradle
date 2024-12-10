@@ -23,6 +23,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -52,10 +53,10 @@ task deleteLibs(type: Delete) {
     }
 }
 
-//preBuild.dependsOn deleteLibs
-//preBuild.dependsOn downloadAarch
-/*preBuild.dependsOn downloadArmeabi
-preBuild.dependsOn downloadx86*/
+preBuild.dependsOn deleteLibs
+preBuild.dependsOn downloadAarch
+preBuild.dependsOn downloadArmeabi
+preBuild.dependsOn downloadx86
 
 dependencies {
     implementation libs.appcompat
