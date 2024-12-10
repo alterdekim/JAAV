@@ -8,30 +8,105 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="170dp"
         android:background="@drawable/layout_bg"
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingTop="7dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="Name"
+            android:textAllCaps="false"
+            android:textColor="@color/grey"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="de.yaml"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="Public key"
+            android:textAllCaps="false"
+            android:textColor="@color/grey"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="8x6qHHHgsa5nq82nd=="
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="Address"
+            android:textAllCaps="false"
+            android:textColor="@color/grey"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="10.66.66.2"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="Endpoint"
+            android:textAllCaps="false"
+            android:textColor="@color/grey"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="167.140.76.33:9999"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="normal" />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:background="@drawable/layout_bg"
         android:orientation="vertical">
+
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:background="@drawable/layout_switcher"
+            android:layout_marginHorizontal="20dp"
             android:layout_marginTop="10dp"
-            android:layout_marginHorizontal="20dp">
+            android:background="@drawable/layout_switcher"
+            android:orientation="horizontal">
+
             <LinearLayout
-                android:layout_weight="1"
-                android:background="@drawable/layout_swl"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/layout_swl">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -46,9 +121,10 @@
             </LinearLayout>
             <!-- android:background="@drawable/layout_swr" -->
             <LinearLayout
-                android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -60,6 +136,28 @@
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
+
         </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:text="Add app"
+            android:textAlignment="center"
+            android:textSize="12sp">
+
+        </Button>
     </LinearLayout>
 </LinearLayout>
