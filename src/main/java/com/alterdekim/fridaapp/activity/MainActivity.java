@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
         ControllerManager.putController(new MainActivityController());
         this.controller = (MainActivityController) ControllerManager.getController(ControllerId.MainActivityController);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

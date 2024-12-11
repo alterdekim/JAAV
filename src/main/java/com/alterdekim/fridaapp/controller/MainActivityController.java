@@ -12,6 +12,7 @@ import androidx.room.Room;
 
 import com.alterdekim.fridaapp.R;
 import com.alterdekim.fridaapp.activity.MainActivity;
+import com.alterdekim.fridaapp.activity.SingleConfigActivity;
 import com.alterdekim.fridaapp.room.AppDatabase;
 import com.alterdekim.fridaapp.room.Config;
 import com.alterdekim.fridaapp.service.FridaService;
@@ -63,6 +64,10 @@ public class MainActivityController implements IController {
                         view_switch.setUseMaterialThemeColors(true);
                         view_switch.setOnCheckedChangeListener((compoundButton, b) -> toggleVpn(view_switch, config, b));
                         view_name.setText(config.getTitle());
+                        view_name.setOnClickListener(view -> {
+                            Intent intent = new Intent(this.mainActivity, SingleConfigActivity.class);
+                            this.mainActivity.startActivity(intent);
+                        });
                         if( iter.hasNext() ) this.mainActivity.getCfg_list().addView(inflater.inflate(R.layout.single_divider, this.mainActivity.getCfg_list(), false));
                     }
                 })

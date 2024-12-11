@@ -22,11 +22,13 @@
             android:textColor="@color/grey"
             android:textSize="14sp"
             android:textStyle="normal" />
+
         <TextView
+            android:id="@+id/interface_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:text="de.yaml"
+            android:text="yaml"
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="14sp"
@@ -40,7 +42,9 @@
             android:textColor="@color/grey"
             android:textSize="14sp"
             android:textStyle="normal" />
+
         <TextView
+            android:id="@+id/public_key"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -58,7 +62,9 @@
             android:textColor="@color/grey"
             android:textSize="14sp"
             android:textStyle="normal" />
+
         <TextView
+            android:id="@+id/address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -76,7 +82,9 @@
             android:textColor="@color/grey"
             android:textSize="14sp"
             android:textStyle="normal" />
+
         <TextView
+            android:id="@+id/endpoint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -103,6 +111,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/switch_all"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -121,6 +130,7 @@
             </LinearLayout>
             <!-- android:background="@drawable/layout_swr" -->
             <LinearLayout
+                android:id="@+id/switch_dis"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1">
@@ -145,12 +155,14 @@
             android:layout_weight="1">
 
             <LinearLayout
+                android:id="@+id/apps_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
         </ScrollView>
 
         <Button
+            android:id="@+id/add_app"
             android:layout_width="100dp"
             android:layout_height="35dp"
             android:layout_gravity="center"
