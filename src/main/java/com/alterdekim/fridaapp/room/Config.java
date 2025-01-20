@@ -21,6 +21,6 @@ public class Config {
     @ColumnInfo(name = "title")
     private final String title;
 
-    @ColumnInfo(name = "data_hex")
-    private final String data_hex;
+    @ColumnInfo(name = "data_raw")
+    private final byte[] data_raw;
 }

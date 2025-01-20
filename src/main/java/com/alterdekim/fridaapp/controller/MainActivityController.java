@@ -16,8 +16,12 @@ import com.alterdekim.fridaapp.activity.SingleConfigActivity;
 import com.alterdekim.fridaapp.room.AppDatabase;
 import com.alterdekim.fridaapp.room.Config;
 import com.alterdekim.fridaapp.service.FridaService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -59,8 +63,8 @@ public class MainActivityController implements IController {
                         Config config = iter.next();
                         View cfg_instance = inflater.inflate(R.layout.single_config, this.mainActivity.getCfg_list(), false);
                         this.mainActivity.getCfg_list().addView(cfg_instance);
-                        TextView view_name = (TextView) cfg_instance.findViewById(R.id.config_name);
-                        SwitchMaterial view_switch = (SwitchMaterial) cfg_instance.findViewById(R.id.config_switch);
+                        TextView view_name = cfg_instance.findViewById(R.id.config_name);
+                        SwitchMaterial view_switch = cfg_instance.findViewById(R.id.config_switch);
                         view_switch.setUseMaterialThemeColors(true);
                         view_switch.setOnCheckedChangeListener((compoundButton, b) -> toggleVpn(view_switch, config, b));
                         view_name.setText(config.getTitle());
@@ -75,8 +79,17 @@ public class MainActivityController implements IController {
                 .subscribe();
     }
 
-    public void insertNewConfig(String name, String hex) {
-        db.userDao().insertAll(new Config(name, hex))
+    public void insertNewConfig(String name, byte[] config) {
+        try {
+            com.alterdekim.frida.config.Config cfg = new ObjectMapper(new YAMLFactory()).setAnnotationIntrospector(new JacksonAnnotationIntrospector()).readValue(config, com.alterdekim.frida.config.Config.class);
+            Log.i(TAG, cfg.toString());
+        } catch (IOException e) {
+            Log.e(TAG, "Can't parse config");
+            e.printStackTrace();
+            Toast.makeText(this.mainActivity, R.string.config_adding_error, Toast.LENGTH_LONG).show();
+            return;
+        }
+        db.userDao().insertAll(new Config(name, config))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(throwable -> Toast.makeText(MainActivityController.this.mainActivity, R.string.config_adding_error, Toast.LENGTH_LONG).show())
@@ -86,7 +99,7 @@ public class MainActivityController implements IController {
 
     private void toggleVpn(SwitchMaterial view, Config config, boolean val) {
         Intent intent = new Intent(this.mainActivity, FridaService.class);
-        intent.putExtra("vpn_hex", config.getData_hex());
+        intent.putExtra("vpn_data", config.getData_raw());
         intent.putExtra("vpn_uid", config.getUid());
         intent.putExtra("vpn_state", val);
         this.mainActivity.startService(intent);

@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.alterdekim.frida.FridaLib;
 
+import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -20,10 +22,10 @@ public class NativeBinaryConnection implements Runnable {
         try {
             Log.i(TAG, "FD: " + this.fd);
             Log.i(TAG, "Starting Frida client");
-            int r = lib.start(this.hex.toLowerCase(), this.fd, false, this.tempFile);
+            int r = lib.start(this.hex, this.fd, false, this.tempFile);
             Log.i(TAG, "Exit code: " + r);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
         }
     }
 }

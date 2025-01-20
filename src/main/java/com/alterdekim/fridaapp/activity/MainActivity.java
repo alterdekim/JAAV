@@ -55,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 try {
                     String raw_data = Util.readTextFromUri(this, data.getData());
                     String name = Util.getFilenameFromUri(this, data.getData());
-                    String hex = Util.bytesToHex(raw_data.getBytes());
-                    this.controller.insertNewConfig(name, hex);
+                    byte[] config = raw_data.getBytes();
+                    this.controller.insertNewConfig(name, config);
                 } catch (IOException e) {
                     Log.e(TAG, e.getMessage());
                 }

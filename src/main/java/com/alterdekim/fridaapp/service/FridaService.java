@@ -6,6 +6,10 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import com.alterdekim.frida.FridaLib;
+import com.alterdekim.frida.config.Config;
+import com.alterdekim.fridaapp.util.Util;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,7 +24,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class FridaService extends VpnService {
     private static final String TAG = FridaService.class.getSimpleName();
-    private static final String VPN_ADDRESS = "10.66.66.6"; // Only IPv4 support for now
     private static final String VPN_ROUTE = "0.0.0.0"; // Intercept everything
 
     private ParcelFileDescriptor vpnInterface = null;
@@ -36,8 +39,9 @@ public class FridaService extends VpnService {
         Log.i(TAG, "Created");
     }
 
-    private void setupVPN() {
+    private void setupVPN(byte[] cfg_raw) {
         try {
+                Config config = new ObjectMapper(new YAMLFactory()).readValue(cfg_raw, Config.class);
                 File outputDir =  this.getCacheDir(); // context being the Activity pointer
                 File outputFile = new File(outputDir, "fridalib.log");
                 if( outputFile.exists() ) { outputFile.delete(); }
@@ -61,9 +65,9 @@ public class FridaService extends VpnService {
 
                 Builder builder = new Builder();
                 builder.setMtu(1400);
-                builder.addAddress(VPN_ADDRESS, 24);
+                builder.addAddress(config.getClient().getAddress(), 24);
                 builder.addRoute(VPN_ROUTE, 0);
-                builder.addDnsServer("8.8.8.8");
+                //builder.addDnsServer("8.8.8.8");
                 //builder.addAllowedApplication();
                 builder.addDisallowedApplication("com.alterdekim.fridaapp");
                 vpnInterface = builder.establish();
@@ -95,16 +99,16 @@ public class FridaService extends VpnService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if( intent.getExtras() == null ) return START_STICKY;
-        String hex = intent.getExtras().getString("vpn_hex");
+        byte[] config = intent.getExtras().getByteArray("vpn_data");
         int uid = intent.getExtras().getInt("vpn_uid");
         boolean state = intent.getExtras().getBoolean("vpn_state");
         if(!state) {
             this.lib.stop();
             return START_STICKY;
         }
-        setupVPN();
+        setupVPN(config);
         // TODO: different configs
-        this.vpnProcess = Flowable.fromRunnable(new NativeBinaryConnection(vpnInterface.detachFd(), hex, lib, logPath))
+        this.vpnProcess = Flowable.fromRunnable(new NativeBinaryConnection(vpnInterface.detachFd(), Util.bytesToHex(config), lib, logPath))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(Schedulers.newThread())
                 .subscribe();
