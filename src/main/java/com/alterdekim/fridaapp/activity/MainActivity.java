@@ -5,13 +5,9 @@ import android.content.Intent;
 import android.net.VpnService;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -21,21 +17,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.room.Room;
 
 import com.alterdekim.fridaapp.R;
 import com.alterdekim.fridaapp.controller.ControllerId;
 import com.alterdekim.fridaapp.controller.ControllerManager;
 import com.alterdekim.fridaapp.controller.MainActivityController;
 import com.alterdekim.fridaapp.util.Util;
-import com.alterdekim.fridaapp.room.AppDatabase;
-import com.alterdekim.fridaapp.room.Config;
 import com.alterdekim.fridaapp.service.FridaService;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 
 import lombok.Getter;
 

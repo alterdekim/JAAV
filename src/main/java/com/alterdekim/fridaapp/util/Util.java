@@ -5,12 +5,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Objects;
 
 public class Util {
     public static String readTextFromUri(Context context, Uri uri) throws IOException {

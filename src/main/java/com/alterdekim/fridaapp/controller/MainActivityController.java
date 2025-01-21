@@ -22,7 +22,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -44,6 +46,11 @@ public class MainActivityController implements IController {
     public void onCreateGUI(AppCompatActivity activity) {
         this.db = Room.databaseBuilder(activity.getApplicationContext(), AppDatabase.class, "def-db").build();
         this.mainActivity = (MainActivity) activity;
+        Intent intent = new Intent(this.mainActivity, FridaService.class);
+        intent.putExtra("vpn_data", new byte[0]);
+        intent.putExtra("vpn_uid", -1);
+        intent.putExtra("vpn_state", false);
+        this.mainActivity.startService(intent);
         this.initConfigListGUI();
     }
 
@@ -59,17 +66,31 @@ public class MainActivityController implements IController {
                         return;
                     }
                     Iterator<Config> iter = cl.iterator();
+                    List<SwitchMaterial> switches = new ArrayList<>();
                     while( iter.hasNext() ) {
                         Config config = iter.next();
                         View cfg_instance = inflater.inflate(R.layout.single_config, this.mainActivity.getCfg_list(), false);
                         this.mainActivity.getCfg_list().addView(cfg_instance);
                         TextView view_name = cfg_instance.findViewById(R.id.config_name);
                         SwitchMaterial view_switch = cfg_instance.findViewById(R.id.config_switch);
+                        switches.add(view_switch);
                         view_switch.setUseMaterialThemeColors(true);
-                        view_switch.setOnCheckedChangeListener((compoundButton, b) -> toggleVpn(view_switch, config, b));
+                        view_switch.setOnCheckedChangeListener((compoundButton, b) -> {
+                            if( b ) {
+                                for (SwitchMaterial ss : switches) {
+                                    if (!ss.equals(view_switch)) {
+                                        Log.i(TAG, "DEACTIVATED");
+                                        ss.setChecked(false);
+                                    }
+                                }
+                            }
+                            toggleVpn(config, b);
+                        });
                         view_name.setText(config.getTitle());
                         view_name.setOnClickListener(view -> {
                             Intent intent = new Intent(this.mainActivity, SingleConfigActivity.class);
+                            intent.putExtra("config_data", config.getData_raw());
+                            intent.putExtra("config_title", config.getTitle());
                             this.mainActivity.startActivity(intent);
                         });
                         if( iter.hasNext() ) this.mainActivity.getCfg_list().addView(inflater.inflate(R.layout.single_divider, this.mainActivity.getCfg_list(), false));
@@ -81,11 +102,8 @@ public class MainActivityController implements IController {
 
     public void insertNewConfig(String name, byte[] config) {
         try {
-            com.alterdekim.frida.config.Config cfg = new ObjectMapper(new YAMLFactory()).setAnnotationIntrospector(new JacksonAnnotationIntrospector()).readValue(config, com.alterdekim.frida.config.Config.class);
-            Log.i(TAG, cfg.toString());
+            new ObjectMapper(new YAMLFactory()).setAnnotationIntrospector(new JacksonAnnotationIntrospector()).readValue(config, com.alterdekim.frida.config.Config.class);
         } catch (IOException e) {
-            Log.e(TAG, "Can't parse config");
-            e.printStackTrace();
             Toast.makeText(this.mainActivity, R.string.config_adding_error, Toast.LENGTH_LONG).show();
             return;
         }
@@ -97,7 +115,7 @@ public class MainActivityController implements IController {
                 .subscribe();
     }
 
-    private void toggleVpn(SwitchMaterial view, Config config, boolean val) {
+    private void toggleVpn(Config config, boolean val) {
         Intent intent = new Intent(this.mainActivity, FridaService.class);
         intent.putExtra("vpn_data", config.getData_raw());
         intent.putExtra("vpn_uid", config.getUid());

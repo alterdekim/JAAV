@@ -34,6 +34,8 @@ public class FridaService extends VpnService {
 
     private final FridaLib lib = new FridaLib();
 
+    private int uid = -1;
+
     @Override
     public void onCreate() {
         Log.i(TAG, "Created");
@@ -100,14 +102,19 @@ public class FridaService extends VpnService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if( intent.getExtras() == null ) return START_STICKY;
         byte[] config = intent.getExtras().getByteArray("vpn_data");
-        int uid = intent.getExtras().getInt("vpn_uid");
+        int cfg_uid = intent.getExtras().getInt("vpn_uid");
         boolean state = intent.getExtras().getBoolean("vpn_state");
         if(!state) {
             this.lib.stop();
             return START_STICKY;
         }
+        if(cfg_uid != this.uid && this.uid != -1) {
+            this.lib.stop();
+            turnOff();
+        }
+        this.uid = cfg_uid;
         setupVPN(config);
-        // TODO: different configs
+
         this.vpnProcess = Flowable.fromRunnable(new NativeBinaryConnection(vpnInterface.detachFd(), Util.bytesToHex(config), lib, logPath))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(Schedulers.newThread())
