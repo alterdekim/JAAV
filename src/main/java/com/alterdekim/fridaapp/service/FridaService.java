@@ -41,37 +41,43 @@ public class FridaService extends VpnService {
         Log.i(TAG, "Created");
     }
 
-    private void setupVPN(byte[] cfg_raw) {
+    private void setupVPN(com.alterdekim.fridaapp.room.Config _config) {
         try {
-                Config config = new ObjectMapper(new YAMLFactory()).readValue(cfg_raw, Config.class);
+                Config config = new ObjectMapper(new YAMLFactory()).readValue(_config.getData_raw(), Config.class);
                 File outputDir =  this.getCacheDir(); // context being the Activity pointer
                 File outputFile = new File(outputDir, "fridalib.log");
                 if( outputFile.exists() ) { outputFile.delete(); }
                 outputFile.createNewFile();
                 this.logPath = outputFile.getAbsolutePath();
-                Log.i(TAG, logPath);
-                /*new Thread(() -> {
-                    try {
-                        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(outputFile)));
-                        String str = "";
-                        Log.i(TAG, "Reading fd has started");
-                        while (true) {
-                            if((str = br.readLine()) != null) {
-                                Log.i(TAG, str);
-                            }
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, e.getMessage());
-                    }
-                }).start();*/
+//                Log.i(TAG, logPath);
+//                new Thread(() -> {
+//                    try {
+//                        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(outputFile)));
+//                        String str = "";
+//                        Log.i(TAG, "Reading fd has started");
+//                        while (true) {
+//                            if((str = br.readLine()) != null) {
+//                                Log.i(TAG, str);
+//                            }
+//                        }
+//                    } catch (Exception e) {
+//                        Log.e(TAG, e.getMessage());
+//                    }
+//                }).start();
 
                 Builder builder = new Builder();
                 builder.setMtu(1400);
                 builder.addAddress(config.getClient().getAddress(), 24);
                 builder.addRoute(VPN_ROUTE, 0);
                 //builder.addDnsServer("8.8.8.8");
-                //builder.addAllowedApplication();
-                builder.addDisallowedApplication("com.alterdekim.fridaapp");
+                for( String packageName : _config.getPackages() ) {
+                    if( _config.isAllowed() ) {
+                        builder.addAllowedApplication(packageName);
+                        continue;
+                    }
+                    builder.addDisallowedApplication(packageName);
+                }
+                if( !_config.isAllowed() ) builder.addDisallowedApplication("com.alterdekim.fridaapp");
                 vpnInterface = builder.establish();
         } catch (Exception e) {
             Log.e(TAG, "error", e);
@@ -101,9 +107,14 @@ public class FridaService extends VpnService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if( intent.getExtras() == null ) return START_STICKY;
-        byte[] config = intent.getExtras().getByteArray("vpn_data");
-        int cfg_uid = intent.getExtras().getInt("vpn_uid");
-        boolean state = intent.getExtras().getBoolean("vpn_state");
+//        byte[] config = intent.getExtras().getByteArray("vpn_data");
+//        int cfg_uid = intent.getExtras().getInt("vpn_uid");
+
+        com.alterdekim.fridaapp.room.Config config = (com.alterdekim.fridaapp.room.Config) intent.getExtras().getSerializable("config");
+
+        int cfg_uid = config != null ? config.getUid() : -1;
+
+        boolean state = intent.getExtras().getBoolean("vpnState");
         if(!state) {
             this.lib.stop();
             return START_STICKY;
@@ -115,7 +126,9 @@ public class FridaService extends VpnService {
         this.uid = cfg_uid;
         setupVPN(config);
 
-        this.vpnProcess = Flowable.fromRunnable(new NativeBinaryConnection(vpnInterface.detachFd(), Util.bytesToHex(config), lib, logPath))
+        byte[] _cc = config != null ? config.getData_raw() : new byte[0];
+
+        this.vpnProcess = Flowable.fromRunnable(new NativeBinaryConnection(vpnInterface.detachFd(), Util.bytesToHex(_cc), lib, logPath))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(Schedulers.newThread())
                 .subscribe();

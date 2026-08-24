@@ -89,6 +89,12 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        this.controller.initConfigListGUI();
+    }
+
+    @Override
     public boolean onMenuItemClick(MenuItem item) {
         if( item.getItemId() == R.id.new_config ) {
             newConfig();

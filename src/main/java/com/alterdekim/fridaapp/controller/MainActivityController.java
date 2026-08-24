@@ -1,6 +1,7 @@
 package com.alterdekim.fridaapp.controller;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
+import com.alterdekim.fridaapp.App;
 import com.alterdekim.fridaapp.R;
 import com.alterdekim.fridaapp.activity.MainActivity;
 import com.alterdekim.fridaapp.activity.SingleConfigActivity;
@@ -33,8 +35,6 @@ public class MainActivityController implements IController {
 
     private static final String TAG = MainActivityController.class.getSimpleName();
 
-    private AppDatabase db;
-
     private MainActivity mainActivity;
 
     @Override
@@ -44,19 +44,20 @@ public class MainActivityController implements IController {
 
     @Override
     public void onCreateGUI(AppCompatActivity activity) {
-        this.db = Room.databaseBuilder(activity.getApplicationContext(), AppDatabase.class, "def-db").build();
         this.mainActivity = (MainActivity) activity;
         Intent intent = new Intent(this.mainActivity, FridaService.class);
-        intent.putExtra("vpn_data", new byte[0]);
-        intent.putExtra("vpn_uid", -1);
-        intent.putExtra("vpn_state", false);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("config", null);
+        bundle.putBoolean("vpnState", false);
+        intent.putExtras(bundle);
         this.mainActivity.startService(intent);
         this.initConfigListGUI();
     }
 
-    private void initConfigListGUI() {
+    public void initConfigListGUI() {
         LayoutInflater inflater = this.mainActivity.getLayoutInflater();
-        this.db.userDao().getAll()
+        App app = (App) this.mainActivity.getApplication();
+        app.getDb().userDao().getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(cl -> {
@@ -89,8 +90,9 @@ public class MainActivityController implements IController {
                         view_name.setText(config.getTitle());
                         view_name.setOnClickListener(view -> {
                             Intent intent = new Intent(this.mainActivity, SingleConfigActivity.class);
-                            intent.putExtra("config_data", config.getData_raw());
-                            intent.putExtra("config_title", config.getTitle());
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("config", config);
+                            intent.putExtras(bundle);
                             this.mainActivity.startActivity(intent);
                         });
                         if( iter.hasNext() ) this.mainActivity.getCfg_list().addView(inflater.inflate(R.layout.single_divider, this.mainActivity.getCfg_list(), false));
@@ -107,7 +109,8 @@ public class MainActivityController implements IController {
             Toast.makeText(this.mainActivity, R.string.config_adding_error, Toast.LENGTH_LONG).show();
             return;
         }
-        db.userDao().insertAll(new Config(name, config))
+        App app = (App) this.mainActivity.getApplication();
+        app.getDb().userDao().insertAll(new Config(name, config))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(throwable -> Toast.makeText(MainActivityController.this.mainActivity, R.string.config_adding_error, Toast.LENGTH_LONG).show())
@@ -117,9 +120,10 @@ public class MainActivityController implements IController {
 
     private void toggleVpn(Config config, boolean val) {
         Intent intent = new Intent(this.mainActivity, FridaService.class);
-        intent.putExtra("vpn_data", config.getData_raw());
-        intent.putExtra("vpn_uid", config.getUid());
-        intent.putExtra("vpn_state", val);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("config", config);
+        bundle.putBoolean("vpnState", val);
+        intent.putExtras(bundle);
         this.mainActivity.startService(intent);
     }
 }
