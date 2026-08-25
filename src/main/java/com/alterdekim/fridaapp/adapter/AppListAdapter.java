@@ -16,9 +16,11 @@ import com.alterdekim.fridaapp.R;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
 public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppViewHolder> {
+    @Getter
     private List<AppPopUp> appList;
     private final ClickListener clickListener;
 

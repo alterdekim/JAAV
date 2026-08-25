@@ -44,7 +44,7 @@ public class Config implements Serializable {
     public Config(String title, byte[] data_raw) {
         this.title = title;
         this.data_raw = data_raw;
-        this.isAllowed = true;
+        this.isAllowed = false;
         this.packages = new ArrayList<>();
     }
 
