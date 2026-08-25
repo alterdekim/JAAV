@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                             .setPositiveButton(android.R.string.yes, (dialog, btn) -> {
                                 Config c1 = adapter.getConfigList().get(position);
                                 app.getDb()
-                                        .userDao()
+                                        .configDao()
                                         .delete(c1)
                                         .subscribeOn(Schedulers.io())
                                         .doOnComplete(() -> {
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 (position, isEnabled) -> {
                     if(isEnabled) {
                         app.getDb()
-                                .userDao()
+                                .configDao()
                                 .enableSingle(adapter.getConfigList().get(position).getUid())
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         if( this.configFetchJob != null ) this.configFetchJob.dispose();
 
         this.configFetchJob = app.getDb()
-                .userDao()
+                .configDao()
                 .getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         }
         App app = (App) this.getApplication();
         app.getDb()
-                .userDao()
+                .configDao()
                 .insertAll(nConfig)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     private void disableAllTunnels() {
         App app = (App) this.getApplication();
         app.getDb()
-                .userDao()
+                .configDao()
                 .disableAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         App app = (App) getApplication();
 
         app.getDb()
-            .userDao()
+            .configDao()
             .getEnabled()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

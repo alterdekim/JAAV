@@ -175,7 +175,7 @@ public class SingleConfigActivity extends AppCompatActivity {
         App app = (App) this.getApplication();
 
         app.getDb()
-                .userDao()
+                .configDao()
                 .insertAll(config)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

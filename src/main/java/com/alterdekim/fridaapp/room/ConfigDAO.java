@@ -18,7 +18,7 @@ public interface ConfigDAO {
     Flowable<List<Config>> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    Completable insertAll(Config... users);
+    Completable insertAll(Config... configs);
 
     @Query("UPDATE config SET is_enabled = CASE WHEN uid = :configId THEN 1 ELSE 0 END")
     Completable enableSingle(int configId);
@@ -30,5 +30,5 @@ public interface ConfigDAO {
     Single<Config> getEnabled();
 
     @Delete
-    Completable delete(Config user);
+    Completable delete(Config config);
 }

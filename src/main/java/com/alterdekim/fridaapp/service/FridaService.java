@@ -98,7 +98,7 @@ public class FridaService extends VpnService {
         App app = (App) getApplication();
 
         app.getDb()
-            .userDao()
+            .configDao()
             .disableAll()
             .subscribe();
 
