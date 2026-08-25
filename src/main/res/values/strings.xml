@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Frida</string>
+    <string name="vpn_access_denied">VPN service is required for using this app</string>
+    <string name="confirm_config_removal">Are you sure you want to remove config?</string>
     <string name="create_config">Create from scratch</string>
     <string name="import_config">Import from file</string>
     <string name="config_adding_error">Unable to add new config</string>

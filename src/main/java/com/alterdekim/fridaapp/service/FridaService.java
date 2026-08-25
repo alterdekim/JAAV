@@ -1,12 +1,18 @@
 package com.alterdekim.fridaapp.service;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.VpnService;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.alterdekim.frida.FridaLib;
 import com.alterdekim.frida.config.Config;
+import com.alterdekim.fridaapp.App;
 import com.alterdekim.fridaapp.util.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -39,6 +45,9 @@ public class FridaService extends VpnService {
     @Override
     public void onCreate() {
         Log.i(TAG, "Created");
+        LocalBroadcastManager
+                .getInstance(this)
+                .registerReceiver(new ServiceEchoReceiver(), new IntentFilter("ping"));
     }
 
     private void setupVPN(com.alterdekim.fridaapp.room.Config _config) {
@@ -86,6 +95,13 @@ public class FridaService extends VpnService {
 
     @Override
     public void onDestroy() {
+        App app = (App) getApplication();
+
+        app.getDb()
+            .userDao()
+            .disableAll()
+            .subscribe();
+
         turnOff();
     }
 
@@ -107,8 +123,6 @@ public class FridaService extends VpnService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if( intent.getExtras() == null ) return START_STICKY;
-//        byte[] config = intent.getExtras().getByteArray("vpn_data");
-//        int cfg_uid = intent.getExtras().getInt("vpn_uid");
 
         com.alterdekim.fridaapp.room.Config config = (com.alterdekim.fridaapp.room.Config) intent.getExtras().getSerializable("config");
 
@@ -134,5 +148,13 @@ public class FridaService extends VpnService {
                 .subscribe();
 
         return START_STICKY;
+    }
+
+    private class ServiceEchoReceiver extends BroadcastReceiver {
+        public void onReceive (Context context, Intent intent) {
+            LocalBroadcastManager
+                    .getInstance(FridaService.this)
+                    .sendBroadcastSync(new Intent("pong"));
+        }
     }
 }

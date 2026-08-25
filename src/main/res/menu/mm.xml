@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/new_config"
+        android:enabled="false"
         android:icon="@drawable/baseline_create_24"
         android:iconTint="@color/black"
         android:title="@string/create_config" />

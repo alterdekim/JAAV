@@ -38,6 +38,9 @@ public class Config implements Serializable {
     @ColumnInfo(name = "packages_list")
     private ArrayList<String> packages;
 
+    @ColumnInfo(name = "is_enabled")
+    private boolean enabled;
+
     public Config(String title, byte[] data_raw) {
         this.title = title;
         this.data_raw = data_raw;

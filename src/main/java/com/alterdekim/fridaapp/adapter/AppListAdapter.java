@@ -18,24 +18,24 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.MyViewHolder> {
+public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppViewHolder> {
     private List<AppPopUp> appList;
     private final ClickListener clickListener;
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AppViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.app_popup_item, parent, false);
 
         view.getLayoutParams().height = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 50, Resources.getSystem().getDisplayMetrics());
 
-        return new MyViewHolder(view, this.clickListener);
+        return new AppViewHolder(view, this.clickListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AppViewHolder holder, int position) {
         AppPopUp appItem = appList.get(position);
 
         holder.appName.setText(appItem.getName());
@@ -47,12 +47,12 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.MyViewHo
         return appList.size();
     }
 
-    static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class AppViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView appName;
         ImageView appIcon;
         private ClickListener clickListener;
 
-        public MyViewHolder(@NonNull View itemView, ClickListener clickListener) {
+        public AppViewHolder(@NonNull View itemView, ClickListener clickListener) {
             super(itemView);
             this.clickListener = clickListener;
             itemView.setOnClickListener(this);
@@ -66,9 +66,5 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.MyViewHo
             if (position < 0) return;
             clickListener.onItemClick(position, v);
         }
-    }
-
-    public interface ClickListener {
-        void onItemClick(int position, View view);
     }
 }

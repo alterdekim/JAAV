@@ -17,14 +17,17 @@ public interface ConfigDAO {
     @Query("SELECT * FROM config")
     Flowable<List<Config>> getAll();
 
-    @Query("SELECT * FROM config WHERE uid IN (:cfgIds)")
-    Flowable<List<Config>> loadAllByIds(int[] cfgIds);
-
-    @Query("SELECT * FROM config WHERE uid = :cfgId")
-    Single<Config> loadById(int cfgId);
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insertAll(Config... users);
+
+    @Query("UPDATE config SET is_enabled = CASE WHEN uid = :configId THEN 1 ELSE 0 END")
+    Completable enableSingle(int configId);
+
+    @Query("UPDATE config SET is_enabled = 0")
+    Completable disableAll();
+
+    @Query("SELECT * FROM config WHERE is_enabled = 1")
+    Single<Config> getEnabled();
 
     @Delete
     Completable delete(Config user);
